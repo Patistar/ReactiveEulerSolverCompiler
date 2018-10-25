@@ -102,10 +102,12 @@ ExternalProject_Add(
 ExternalProject_Add(
 	HDF5
 	GIT_REPOSITORY		https://github.com/live-clones/hdf5
-	GIT_TAG				origin/master
+	GIT_TAG				origin/hdf5_1_10_4
 	GIT_SHALLOW     	ON
 	GIT_PROGRESS    	ON
 	CMAKE_ARGS			${CMAKE_EXTERNALPROJECT_FORWARDS}
+						-DCMAKE_REQUIRED_LIBRARIES=""
+						-DCMAKE_INSTALL_PREFIX=${projects_install_dir}/HDF5
 )
 
 ## Install CGNS
@@ -113,10 +115,11 @@ ExternalProject_Add(
 	CGNS
 	DEPENDS 			HDF5
 	GIT_REPOSITORY		https://github.com/CGNS/CGNS
-	GIT_TAG				origin/cmake
+	GIT_TAG				tags/v3.3.1
 	GIT_SHALLOW     	ON
 	GIT_PROGRESS    	ON
 	CMAKE_ARGS			${CMAKE_EXTERNALPROJECT_FORWARDS}
+						-DCMAKE_INSTALL_PREFIX=${projects_install_dir}/CGNS
 						-DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/projects/HDF5
 )
 
@@ -128,15 +131,19 @@ ExternalProject_Add(
 	GIT_PROGRESS    	ON
 	CMAKE_ARGS      	${CMAKE_EXTERNALPROJECT_FORWARDS}
 						-DBENCHMARK_DOWNLOAD_DEPENDENCIES=ON
+						-DCMAKE_INSTALL_PREFIX=${projects_install_dir}/GoogleBenchmark
 )
 
 ## Install ReactiveEulerSolver
 ExternalProject_Add(
 	ReactiveEulerSolver
-	DEPENDS				hpx
+	DEPENDS				Boost hpx CGNS GoogleBenchmark
 	GIT_REPOSITORY		https://github.com/maikel/ReactiveEulerSolver
 	GIT_SHALLOW     	ON
 	GIT_PROGRESS    	ON
 	CMAKE_ARGS      	${CMAKE_EXTERNALPROJECT_FORWARDS}
 						-DCMAKE_INSTALL_PREFIX=${projects_install_dir}/ReactiveEulerSolver
+						-DCGNS_INCLUDE_DIRS=${projects_install_dir}/CGNS/include
+						-DCGNS_LIBRARIES=${projects_install_dir}/CGNS/lib/libcgns.dylib
+						-DCMAKE_PREFIX_PATH=${projects_install_dir}/hpx
 )
